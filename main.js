@@ -2,17 +2,25 @@ const express = require("express")
 
 const app = express()
 
+app.use(require("body-parser").json())
+
 app.all("/hello-world", (req, res) => {
-    let body = ""
+    let response = "ERROR"
 
-    console.log(req.method, "/hello-world")
+    res.setHeader("content-type", "application/json")
 
-    res.on("data", chunk => body += chunk.toString())
-        .on("end", () => {
-            console.log(body)
-            res.end("OK")
-        })
-        .on("error", e => {throw e})
+    if (req.body.result.resolvedQuery === "ping") {
+        response = "pong"
+    }
+        
+
+    res.status(200).send({
+        "speech": response,
+        "displayText": response,
+        "data": {},
+        "contextOut": [],
+        "source": "hello-world"
+    })
 })
 
 app.listen(8888)
